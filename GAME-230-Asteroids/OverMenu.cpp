@@ -1,6 +1,7 @@
 #include "OverMenu.h"
 
 OverMenu::OverMenu() {
+	currentIndex = 0;
 	font.loadFromFile("font.ttf");
 	endMenuChoice[0].setFont(font);
 	endMenuChoice[0].setCharacterSize(50);

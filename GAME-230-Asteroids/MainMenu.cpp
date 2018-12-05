@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu() {
+	currentIndex = 0;
 	font.loadFromFile("font.ttf");
 	mainMenuChoice[0].setFont(font);
 	mainMenuChoice[0].setCharacterSize(50);

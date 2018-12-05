@@ -1,16 +1,20 @@
 #include "MainMenu.h"
 #include "OverMenu.h"
 #include "GameLevel.h"
+#include "Const.h"
 #include <stdlib.h>
+#include <time.h> 
 
 int main()
 {
+	srand((unsigned)time(NULL));
+	Clock clock;
+	
 	std::unique_ptr<AppState> curState(new MainMenu());
-	RenderWindow window(VideoMode(800, 600), "Just Another Asteroids!");
+	RenderWindow window(VideoMode(WIDTH, HEIGHT), "Just Another Asteroids!");
+	
 
-	CircleShape shape(100.f);
-	shape.setFillColor(Color::Green);
-
+	//float accumulatedTime = 0;
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -20,13 +24,20 @@ int main()
 				window.close();
 		}
 		window.clear();
+		
 		float dt = clock.restart().asSeconds();
+		//accumulatedTime += dt;
+		/*while (accumulatedTime >= 0.01f)
+		{
+			
+			accumulatedTime -= 0.01f;
+		}*/
 		AppState* next = curState->update_state(dt);
+		if (next != nullptr)
+			curState.reset(next);
 		curState->render_frame(window);
 		window.display();
 
-		if (next != nullptr)
-			curState.reset(next);
 	}
 
 	return 0;
