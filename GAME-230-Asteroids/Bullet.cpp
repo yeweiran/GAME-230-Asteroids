@@ -7,7 +7,7 @@ Bullet::Bullet(Vector2f position, float dir, Texture &tex) {
 	shape.setRotation(dir);
 	shape.setTexture(&tex);
 	vel = Vector2f(cosf(((dir - 90) / 360) * 2 * PI), sinf(((dir - 90) / 360) * 2 * PI));
-	shape.setPosition(position.x + vel.x * SHIPR, position.y + vel.y * SHIPR);
+	shape.setPosition(position.x + vel.x * (SHIPR-10), position.y + vel.y * (SHIPR-10));
 	lifeTime = 0;
 }
 
@@ -57,4 +57,9 @@ bool Bullet::getHitFlag() {
 
 int Bullet::setHitFlag() {
 	hitFlag = true;
+	return 0;
+}
+
+float Bullet::getRadius() {
+	return BULLETR;
 }

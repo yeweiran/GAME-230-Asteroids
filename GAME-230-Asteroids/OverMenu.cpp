@@ -1,7 +1,8 @@
 #include "OverMenu.h"
 
-OverMenu::OverMenu() {
+OverMenu::OverMenu(int score) {
 	currentIndex = 0;
+	this->score = score;
 	font.loadFromFile("font.ttf");
 	endMenuChoice[0].setFont(font);
 	endMenuChoice[0].setCharacterSize(50);
@@ -19,10 +20,30 @@ OverMenu::OverMenu() {
 	endText.setCharacterSize(100);
 	endText.setString("Game Over");
 	endText.setFillColor(Color::White);
-	endText.setPosition(150, 150);
+	endText.setPosition(400, 150);
+
+	scoreText.setFont(font);
+	scoreText.setCharacterSize(50);
+	scoreText.setString("Final Score: " + std::to_string(score));
+	scoreText.setFillColor(Color::White);
+	scoreText.setPosition(450, 300);
 
 	currentChoiceRect.setSize(Vector2f(30, 30));
 	currentChoiceRect.setFillColor(Color::Red);
+
+	if (!backTex.loadFromFile("end.jpg"))
+	{
+		exit(0);
+	}
+	else
+	{
+		Vector2u TextureSize = backTex.getSize(); //Get size of texture.
+		Vector2u WindowSize = Vector2u(WIDTH, HEIGHT);             //Get size of window.
+		float ScaleX = (float)WindowSize.x / TextureSize.x;
+		float ScaleY = (float)WindowSize.y / TextureSize.y;     //Calculate scale.
+		background.setTexture(backTex);
+		background.setScale(ScaleX, ScaleY);      //Set scale.  
+	}
 }
 
 AppState* OverMenu::update_state(float dt)
@@ -65,8 +86,9 @@ AppState* OverMenu::update_state(float dt)
 void OverMenu::render_frame(RenderWindow &window)
 {
 	window.clear();
-	//window.draw(background);
+	window.draw(background);
 	window.draw(endText);
+	window.draw(scoreText);
 	for (int i = 0; i < 2; i++) {
 		window.draw(endMenuChoice[i]);
 	}

@@ -17,6 +17,9 @@ public:
 	virtual int getType() = 0;
 	virtual Vector2f getCenter() = 0;
 	virtual void checkCollisionWith(GameObject* obj) = 0;
+	virtual float getRadius() = 0;
+	virtual bool getHitFlag() = 0;
+	virtual int setHitFlag() = 0;
 	float length(Vector2f v) {
 		return sqrtf(v.x*v.x + v.y*v.y);
 	}

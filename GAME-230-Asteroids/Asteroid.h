@@ -8,6 +8,7 @@
 #include <SFML/Main.hpp>
 #include "GameObject.h"
 #include "Const.h"
+#include "Ship.h"
 
 using namespace sf;
 
@@ -22,13 +23,15 @@ private:
 	int type;
 	bool hitFlag;
 public:
-	Asteroid(Texture &tex, int type);
+	Asteroid(Texture &tex, int type, Vector2f pos, int level);
 	virtual int update(float dt, std::vector<GameObject*> &objs);
 	virtual void draw(RenderWindow &window);
 	virtual int getType();
 	virtual Vector2f getCenter();
 	virtual void checkCollisionWith(GameObject* obj);
-	bool getHitFlag();
-	int setHitFlag();
+	virtual float getRadius();
+	virtual bool getHitFlag();
+	virtual int setHitFlag();
+	int getSize();
 };
 

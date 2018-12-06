@@ -18,10 +18,14 @@ private:
 	Font font;
 	Text endMenuChoice[2];
 	Text endText;
+	Text scoreText;
+	int score;
+	Texture backTex;
+	Sprite background;
 	RectangleShape currentChoiceRect;
 	int currentIndex;
 public:
-	OverMenu();
+	OverMenu(int score);
 	virtual AppState* update_state(float dt);
 	virtual void render_frame(RenderWindow &window);
 };

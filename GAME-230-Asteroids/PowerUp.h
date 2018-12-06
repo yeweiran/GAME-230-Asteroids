@@ -8,36 +8,25 @@
 #include <SFML/Main.hpp>
 #include "GameObject.h"
 #include "Const.h"
-#include "Bullet.h"
 
 using namespace sf;
 
-class Ship : public GameObject
+class PowerUp : public GameObject
 {
 private:
 	CircleShape shape;
 	Vector2f position;
-	Vector2f velocity;
-	float vel;
-	float dir;
-	//float shootCD;
-	Texture shieldTex;
-	Texture shipTex;
-	Texture invishipTex;
-	Texture thrustinviTex;
-	Texture thrustTex;
-	Texture thrustShieldTex;
-	SoundBuffer thrustBuf;
-	Sound thrustSound;
+	Vector2f vel;
+	float velv;
+	float radius;
+	int type;
 	bool hitFlag;
-	bool shieldFlag;
-	float inviTime;
-	float changeTime;
-	bool changeFlag;
+	float dir;
+	Texture pu1Tex;
+	Texture pu2Tex;
+	Texture pu3Tex;
 public:
-	Ship(Texture &tex);
-	float getDir();
-	Vector2f getPosition();
+	PowerUp(int type, Vector2f pos);
 	virtual int update(float dt, std::vector<GameObject*> &objs);
 	virtual void draw(RenderWindow &window);
 	virtual int getType();
@@ -46,10 +35,5 @@ public:
 	virtual float getRadius();
 	virtual bool getHitFlag();
 	virtual int setHitFlag();
-	void getShield();
-	bool getShieldFlag();
-	void setInviTiem(float time);
-	bool getInviFlag();
-	void loseShield();
+	int getSize();
 };
-

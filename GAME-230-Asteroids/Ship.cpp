@@ -4,22 +4,31 @@
 
 Ship::Ship(Texture &tex) {
 	hitFlag = false;
+	shieldFlag = false;
+	inviTime = 2;
+	changeTime = 0;
+	changeFlag = false;
+	shieldTex.loadFromFile("shield.png");
+	shipTex.loadFromFile("ship.png");
+	invishipTex.loadFromFile("inviship.png");
+	thrustinviTex.loadFromFile("thrustinvi.png");
+	thrustTex.loadFromFile("thrust.png");
+	thrustShieldTex.loadFromFile("thrustshield.png");
+	thrustBuf.loadFromFile("thrust.wav");
+	thrustSound.setBuffer(thrustBuf);
 	shape.setRadius(SHIPR);
 	shape.setOrigin(SHIPR, SHIPR);
-	shape.setTexture(&tex);
+	shape.setTexture(&shipTex);
 	shape.setPosition(WIDTH / 2, HEIGHT / 2);
 	dir = 0;
 	vel = 0;
-	shootCD = 0;
-	bulletTex.loadFromFile("bullet.png");
+	//shootCD = 0;
+	//bulletTex.loadFromFile("bullet.png");
 }
 int Ship::update(float dt, std::vector<GameObject*> &objs)
 {
-	shootCD -= dt;
-	if (Keyboard::isKeyPressed(Keyboard::Space) && shootCD <= 0) {
-		GameObject* bullet = new Bullet(shape.getPosition(),dir,bulletTex);
-		objs.push_back(bullet);
-		shootCD = SHOOTCD;
+	if(inviTime >= 0) {
+		inviTime -= dt;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Left)) {
 		dir = dir - 360 * dt / 2;
@@ -30,16 +39,38 @@ int Ship::update(float dt, std::vector<GameObject*> &objs)
 
 	shape.setRotation(dir);
 	if (Keyboard::isKeyPressed(Keyboard::Up)) {
+		if (thrustSound.getStatus() != SoundSource::Playing) {
+			thrustSound.play();
+		}
 		if (vel < SHIPV) {
 			vel += (SHIPV * dt / 2);
 		}
+		if (getInviFlag()) {
+			shape.setTexture(&thrustinviTex);
+		}
+		else if (shieldFlag) {
+			shape.setTexture(&thrustShieldTex);
+		}
+		else {
+			shape.setTexture(&thrustTex);
+		}		
 	}
 	else {
+		thrustSound.stop();
 		if (vel > 0) {
 			vel -= (SHIPV * dt / 2);
 		}
 		if (vel < 0) {
 			vel = 0;
+		}
+		if (getInviFlag()) {
+			shape.setTexture(&invishipTex);
+		}
+		else if (shieldFlag) {
+			shape.setTexture(&shieldTex);
+		}
+		else {
+			shape.setTexture(&shipTex);
 		}
 	}
 	Vector2f np = shape.getPosition();
@@ -82,7 +113,18 @@ Vector2f Ship::getCenter() {
 }
 
 void Ship::checkCollisionWith(GameObject* obj) {
-
+	if (!hitFlag && !obj->getHitFlag()) {
+		Vector2f v = shape.getPosition() - obj->getCenter();
+		float len = GameObject::length(v);
+		if (len <= (SHIPR + obj->getRadius() - 5)) {
+			switch (obj->getType())
+			{
+			case POWERUP:
+				obj->setHitFlag();
+				break;
+			}
+		}
+	}
 }
 
 bool Ship::getHitFlag() {
@@ -91,4 +133,35 @@ bool Ship::getHitFlag() {
 
 int Ship::setHitFlag() {
 	hitFlag = true;
+	return 0;
+}
+
+float Ship::getRadius() {
+	return SHIPR;
+}
+
+void Ship::getShield() {
+	shieldFlag = true;
+	shape.setTexture(&shieldTex);
+}
+
+bool Ship::getShieldFlag() {
+	return shieldFlag;
+}
+
+void Ship::setInviTiem(float time) {
+	inviTime = time;
+}
+bool Ship::getInviFlag() {
+	if (inviTime > 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void Ship::loseShield(){
+	shieldFlag = false;
+	shape.setTexture(&shipTex);
 }

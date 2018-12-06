@@ -17,6 +17,8 @@ private:
 	Font font;
 	Text mainMenuChoice[2];
 	Text MainText;
+	Texture backTex;
+	Sprite background;
 	RectangleShape currentChoiceRect;
 	int currentIndex;
 public:

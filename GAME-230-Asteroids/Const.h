@@ -5,13 +5,14 @@
 #define SHIPR 40
 #define SHIPV 500
 #define PI 3.1415926
-#define SHOOTCD 0.4
+#define SHOOTCD 0.2
 #define BULLETR 8
-#define BULLETV 1000
-#define BULLETTIME 0.5
+#define BULLETV 600
+#define BULLETTIME 1.f
 #define SHIP 1
 #define ASTEROID 2
 #define BULLET 3
+#define POWERUP 4
 #define ASTEROIDR3 100
 #define ASTEROIDR2 45
 #define ASTEROIDR1 20
@@ -22,4 +23,8 @@
 #define ROWS 4
 #define BUCKET_WIDTH 200.f
 #define BUCKET_HEIGHT 200.f
-
+#define POWERUPR 30
+#define POWERUPV 50
+#define RAPIDFIRE 0
+#define SHIELD 1
+#define INVINCIBILE 2

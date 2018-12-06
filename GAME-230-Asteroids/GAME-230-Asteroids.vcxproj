@@ -151,6 +151,7 @@
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="GameLevel.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="Ship.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

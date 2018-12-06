@@ -6,23 +6,36 @@ MainMenu::MainMenu() {
 	mainMenuChoice[0].setFont(font);
 	mainMenuChoice[0].setCharacterSize(50);
 	mainMenuChoice[0].setString("Start");
-	mainMenuChoice[0].setFillColor(Color::White);
+	mainMenuChoice[0].setFillColor(Color::Black);
 	mainMenuChoice[0].setPosition(WIDTH / 2 - 100, HEIGHT / 2);
 
 	mainMenuChoice[1].setFont(font);
 	mainMenuChoice[1].setCharacterSize(50);
 	mainMenuChoice[1].setString("Exit");
-	mainMenuChoice[1].setFillColor(Color::White);
+	mainMenuChoice[1].setFillColor(Color::Black);
 	mainMenuChoice[1].setPosition(WIDTH / 2 - 100, HEIGHT / 2 + 60);
 
 	MainText.setFont(font);
 	MainText.setCharacterSize(100);
 	MainText.setString("Just Another Asteroids");
 	MainText.setFillColor(Color::White);
-	MainText.setPosition(150, 150);
+	MainText.setPosition(200, 150);
 
 	currentChoiceRect.setSize(Vector2f(30, 30));
 	currentChoiceRect.setFillColor(Color::Red);
+	if (!backTex.loadFromFile("main.jpg"))
+	{
+		exit(0);
+	}
+	else
+	{
+		Vector2u TextureSize = backTex.getSize(); //Get size of texture.
+		Vector2u WindowSize = Vector2u(WIDTH,HEIGHT);             //Get size of window.
+		float ScaleX = (float)WindowSize.x / TextureSize.x;
+		float ScaleY = (float)WindowSize.y / TextureSize.y;     //Calculate scale.
+		background.setTexture(backTex);
+		background.setScale(ScaleX, ScaleY);      //Set scale.  
+	}
 }
 
 AppState* MainMenu::update_state(float dt)
@@ -37,12 +50,12 @@ AppState* MainMenu::update_state(float dt)
 		downFlag = 1;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Up) && upFlag == 1) {
-		mainMenuChoice[currentIndex].setColor(Color::White);
+		mainMenuChoice[currentIndex].setColor(Color::Black);
 		currentIndex = (currentIndex - 1 + 2) % (2);
 		upFlag = 0;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Down) && downFlag == 1) {
-		mainMenuChoice[currentIndex].setColor(Color::White);
+		mainMenuChoice[currentIndex].setColor(Color::Black);
 		currentIndex = (currentIndex + 1) % (2);
 		downFlag = 0;
 	}
@@ -52,12 +65,12 @@ AppState* MainMenu::update_state(float dt)
 		enterFlag = 1;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Enter) && enterFlag == 1) {
-		mainMenuChoice[currentIndex].setColor(Color::White);
+		mainMenuChoice[currentIndex].setColor(Color::Black);
 		enterFlag = 0;
 		if (currentIndex == 1) {
 			exit(0);
 		}
-		return new GameLevel(1);;
+		return new GameLevel(1,3,0);;
 	}
 	return nullptr;
 }
@@ -65,7 +78,7 @@ AppState* MainMenu::update_state(float dt)
 void MainMenu::render_frame(RenderWindow &window)
 {
 	window.clear();
-	//window.draw(background);
+	window.draw(background);
 	window.draw(MainText);
 	for (int i = 0; i < 2; i++) {
 		window.draw(mainMenuChoice[i]);

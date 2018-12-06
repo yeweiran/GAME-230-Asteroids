@@ -26,7 +26,8 @@ public:
 	virtual int getType();
 	virtual Vector2f getCenter();
 	virtual void checkCollisionWith(GameObject* obj);
-	bool getHitFlag();
-	int setHitFlag();
+	virtual float getRadius();
+	virtual bool getHitFlag();
+	virtual int setHitFlag();
 };
 
