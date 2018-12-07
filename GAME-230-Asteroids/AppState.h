@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -15,4 +15,5 @@ public:
 	virtual AppState* update_state(
 		float dt) = 0;
 	virtual void render_frame(RenderWindow &window) = 0;
+	virtual bool getEndFlag() = 0;
 };

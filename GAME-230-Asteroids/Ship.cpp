@@ -1,6 +1,4 @@
 #include "Ship.h"
-#include "stdlib.h"
-#include "iostream"
 
 Ship::Ship(Texture &tex) {
 	hitFlag = false;
@@ -18,7 +16,7 @@ Ship::Ship(Texture &tex) {
 	thrustSound.setBuffer(thrustBuf);
 	shape.setRadius(SHIPR);
 	shape.setOrigin(SHIPR, SHIPR);
-	shape.setTexture(&shipTex);
+	shape.setTexture(&invishipTex);
 	shape.setPosition(WIDTH / 2, HEIGHT / 2);
 	dir = 0;
 	vel = 0;
@@ -116,11 +114,37 @@ void Ship::checkCollisionWith(GameObject* obj) {
 	if (!hitFlag && !obj->getHitFlag()) {
 		Vector2f v = shape.getPosition() - obj->getCenter();
 		float len = GameObject::length(v);
-		if (len <= (SHIPR + obj->getRadius() - 5)) {
+		if (len <= (SHIPR + obj->getRadius() - 15)) {
 			switch (obj->getType())
 			{
 			case POWERUP:
 				obj->setHitFlag();
+				break;
+			case BULLET:
+				if (((Bullet*)obj)->getBulletType() == ALIENBULLET) {
+					if (inviTime <= 0) {
+						if (shieldFlag) {
+							loseShield();
+							obj->setHitFlag();
+						}
+						else {
+							setHitFlag();
+							obj->setHitFlag();
+						}
+					}					
+				}
+				break;
+			case ALIEN:
+				if (inviTime <= 0) {
+					if (shieldFlag) {
+						loseShield();
+						obj->setHitFlag();
+					}
+					else {
+						setHitFlag();
+						obj->setHitFlag();
+					}
+				}
 				break;
 			}
 		}

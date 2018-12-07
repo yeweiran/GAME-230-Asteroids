@@ -8,20 +8,36 @@
 #include <SFML/Main.hpp>
 #include "GameObject.h"
 #include "Const.h"
+#include "Bullet.h"
 
 using namespace sf;
 
-class Bullet : public GameObject
+class UFO : public GameObject
 {
 private:
 	CircleShape shape;
 	Vector2f position;
 	Vector2f vel;
-	float lifeTime;
-	int bulletType;
+	float velv;
+	float dir;
+	//float shootCD;
+	//Texture shieldTex;
+	Texture shipTex;
+	/*
+	Texture invishipTex;
+	Texture thrustinviTex;
+	Texture thrustTex;
+	Texture thrustShieldTex;*/
+	SoundBuffer thrustBuf;
+	Sound thrustSound;
 	bool hitFlag;
+	float changeCD;
+	float changeTime;
+	bool changeFlag;
 public:
-	Bullet(Vector2f position, float dir, Texture &tex, int type);
+	UFO(Vector2f pos);
+	float getDir();
+	Vector2f getPosition();
 	virtual int update(float dt, std::vector<GameObject*> &objs);
 	virtual void draw(RenderWindow &window);
 	virtual int getType();
@@ -30,6 +46,4 @@ public:
 	virtual float getRadius();
 	virtual bool getHitFlag();
 	virtual int setHitFlag();
-	int getBulletType();
 };
-

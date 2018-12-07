@@ -1,12 +1,15 @@
-#include "GameLevel.h"
+﻿#include "GameLevel.h"
 
 GameLevel::GameLevel(int level, int lives, int score) {
 	this->lives = lives;
 	enemiesRemaining = 0;
 	shootCD = 0;
+	alienCD = 3;
 	tempCD = SHOOTCD;
 	soundFlag = false;
+	aliencrashFlag = false;
 	levelTextTime = 2;
+	alienFlag = true;
 	this->score = score;
 	this->level = level;
 	font.loadFromFile("font.ttf");
@@ -14,6 +17,8 @@ GameLevel::GameLevel(int level, int lives, int score) {
 	asteroidTex.loadFromFile("asteroid.png");
 	bulletTex.loadFromFile("bullet.png");
 	crashTex.loadFromFile("crash.png");
+	ufocrashTex.loadFromFile("ufocrash.png");
+	ufobulletTex.loadFromFile("ufobullet.png");
 	fireBuf.loadFromFile("fire.wav");
 	explodeBuf.loadFromFile("explode.wav");
 	crashBuf.loadFromFile("crash.wav");
@@ -37,17 +42,21 @@ GameLevel::GameLevel(int level, int lives, int score) {
 	scoreText.setCharacterSize(50);
 	scoreText.setString("Scores: " + std::to_string(this->score));
 	scoreText.setFillColor(Color::White);
-	scoreText.setPosition(WIDTH - 350, 0);
+	scoreText.setPosition(WIDTH - 450, 0);
 
 	mainText.setFont(font);
 	mainText.setCharacterSize(100);
 	mainText.setString("LEVEL " + std::to_string(level));
-	mainText.setFillColor(Color::White);
-	mainText.setPosition(500, 300);
+	mainText.setFillColor(Color::Black);
+	mainText.setPosition(400, 300);
 	shape.setRadius(SHIPR);
 	shape.setOrigin(SHIPR, SHIPR);
 	shape.setTexture(&crashTex);
 	shape.setPosition(-500,-500);
+	ufoshape.setRadius(UFOR);
+	ufoshape.setOrigin(UFOR, UFOR);
+	ufoshape.setTexture(&ufocrashTex);
+	ufoshape.setPosition(-500, -500);
 	GameObject* starShip = new Ship(shipTex);
 	objs.push_back(starShip);
 	for (int i = 0; i < 3 * level; i++) {
@@ -78,6 +87,20 @@ GameLevel::GameLevel(int level, int lives, int score) {
 
 AppState* GameLevel::update_state(float dt) {
 	levelTextTime -= dt;
+	if (lives <= 0 && crashSound.getStatus() != SoundSource::Playing) {
+		gc();
+		return new OverMenu(score);
+	}
+		
+	if (enemiesRemaining <= 0) {
+		gc();
+		return new GameLevel(level + 1, lives, score);
+	}
+		
+	if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+		gc();
+		return new MainMenu();
+	}
 	if (crashSound.getStatus() != SoundSource::Playing && winSound.getStatus() != SoundSource::Playing) {
 		shape.setPosition(-500, -500);
 		shootCD -= dt;
@@ -87,6 +110,13 @@ AppState* GameLevel::update_state(float dt) {
 			Vector2i tempBucket = getBucket(starShip->getCenter());
 			bucket_add(tempBucket, starShip);
 			soundFlag = false;
+		}
+		if (aliencrashFlag) {
+			aliencrashTime -= dt;
+			if (aliencrashTime <= 0) {
+				ufoshape.setPosition(-500, -500);
+				aliencrashFlag = false;
+			}
 		}
 		for (int i = 0; i < objs.size(); ++i)
 		{
@@ -128,16 +158,19 @@ AppState* GameLevel::update_state(float dt) {
 							tempBucket = getBucket(powerup->getCenter());
 							bucket_add(curBucket, powerup);
 						}
+						else if (puType == 7 && alienFlag) {
+							GameObject* ufo = new UFO(obj->getCenter());
+							objs.push_back(ufo);
+							Vector2i tempBucket = getBucket(ufo->getCenter());
+							bucket_add(tempBucket, ufo);
+							enemiesRemaining++;
+							alienFlag = false;
+						}
 					}
 					break;
 				case SHIP: {
 					crashSound.play();
 					shape.setPosition(obj->getCenter());
-					Vector2f a = shape.getPosition();
-					/*GameObject* starShip = new Ship(shipTex);
-					objs.push_back(starShip);
-					tempBucket = getBucket(starShip->getCenter());
-					bucket_add(curBucket, starShip);*/
 					soundFlag = true;
 					lives--;
 				}
@@ -165,6 +198,15 @@ AppState* GameLevel::update_state(float dt) {
 					}
 				}
 							  break;
+				case ALIEN:
+					score += 100;
+					explodeSound.play();
+					ufoshape.setPosition(obj->getCenter());
+					aliencrashFlag = true;
+					aliencrashTime = 0.8;
+					enemiesRemaining--;
+					alienFlag = true;
+					break;
 				}
 				objs.erase(objs.begin() + i);
 				bucket_remove(curBucket, obj);
@@ -186,7 +228,7 @@ AppState* GameLevel::update_state(float dt) {
 			for (int i = 0; i < objs.size(); ++i) {
 				if (objs[i]->getType() == SHIP) {
 					Ship* ship = (Ship*)(objs[i]);
-					GameObject* bullet = new Bullet(ship->getCenter(), ship->getDir(), bulletTex);
+					GameObject* bullet = new Bullet(ship->getCenter(), ship->getDir(), bulletTex,PCBULLET);
 					objs.push_back(bullet);
 					Vector2i tempBucket = getBucket(bullet->getCenter());
 					bucket_add(tempBucket, bullet);
@@ -195,15 +237,33 @@ AppState* GameLevel::update_state(float dt) {
 			}
 		}
 
+		if (!alienFlag) {
+			alienCD-=dt;
+			if (alienCD <= 0) {
+				Ship* ship = nullptr;
+				UFO* ufo;
+				for (int i = 0; i < objs.size(); ++i) {
+					if (objs[i]->getType() == SHIP) {
+						ship = (Ship*)(objs[i]);
+					}
+					if (objs[i]->getType() == ALIEN) {
+						ufo = (UFO*)(objs[i]);
+					}
+				}
+				if (ship != nullptr) {
+					Vector2f a = ship->getCenter() - ufo->getCenter();
+					float d = atan2f(a.y, a.x) * 180 / PI + 90;
+					GameObject* bullet = new Bullet(ufo->getCenter(), d, ufobulletTex, ALIENBULLET);
+					objs.push_back(bullet);
+					Vector2i tempBucket = getBucket(bullet->getCenter());
+					bucket_add(tempBucket, bullet);
+					alienCD = ALIENCD;
+				}				
+			}
+		}
+
 		liveText.setString("Lives: " + std::to_string(lives));
 		scoreText.setString("Scores: " + std::to_string(score));
-
-		if (lives <= 0)
-			return new OverMenu(score);
-		if (enemiesRemaining <= 0)
-			return new GameLevel(level + 1, lives, score);
-		if (Keyboard::isKeyPressed(Keyboard::Escape))
-			return new MainMenu();
 		
 	}
 	return nullptr;
@@ -213,13 +273,15 @@ AppState* GameLevel::update_state(float dt) {
 void GameLevel::render_frame(RenderWindow &window) {
 	window.clear();
 	window.draw(background);
-	window.draw(liveText);
-	window.draw(scoreText);	
+	
 	for (int i = 0; i < objs.size(); ++i)
 		objs[i]->draw(window);
 	if (levelTextTime >= 0) {
 		window.draw(mainText);
 	}
+	window.draw(liveText);
+	window.draw(scoreText);
+	window.draw(ufoshape);
 	window.draw(shape);
 }
 
@@ -280,4 +342,17 @@ void GameLevel::detect_collisions(GameObject* obj,Vector2i b)
 	}
 }
 
+void GameLevel::gc() {
+	objs.clear();
+	objs.shrink_to_fit();
+	for (int r = 0; r < ROWS; r++) {
+		for (int c = 0; c < COLUMNS; c++) {
+			grid[c][r].clear();
+			grid[c][r].shrink_to_fit();
+		}
+	}
+}
 
+bool GameLevel::getEndFlag() {
+	return endFlag;
+}

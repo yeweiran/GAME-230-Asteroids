@@ -1,7 +1,8 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Vector2f position, float dir, Texture &tex) {
+Bullet::Bullet(Vector2f position, float dir, Texture &tex, int type) {
 	hitFlag = false;
+	this->bulletType = type;
 	shape.setRadius(BULLETR);
 	shape.setOrigin(BULLETR, BULLETR);
 	shape.setRotation(dir);
@@ -62,4 +63,8 @@ int Bullet::setHitFlag() {
 
 float Bullet::getRadius() {
 	return BULLETR;
+}
+
+int Bullet::getBulletType() {
+	return bulletType;
 }

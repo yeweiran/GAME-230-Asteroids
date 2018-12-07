@@ -105,8 +105,10 @@ void Asteroid::checkCollisionWith(GameObject* obj) {
 				}
 				break;
 			case BULLET:
-				setHitFlag();
-				obj->setHitFlag();
+				if (((Bullet*)obj)->getBulletType() == PCBULLET) {
+					setHitFlag();
+					obj->setHitFlag();
+				}				
 				break;
 			case ASTEROID:
 				vel = Vector2f(v.x / len, v.y / len);

@@ -13,6 +13,7 @@
 #define ASTEROID 2
 #define BULLET 3
 #define POWERUP 4
+#define ALIEN 5
 #define ASTEROIDR3 100
 #define ASTEROIDR2 45
 #define ASTEROIDR1 20
@@ -28,3 +29,8 @@
 #define RAPIDFIRE 0
 #define SHIELD 1
 #define INVINCIBILE 2
+#define UFOV 50
+#define UFOR 50
+#define PCBULLET 0
+#define ALIENBULLET 1
+#define ALIENCD 2.f

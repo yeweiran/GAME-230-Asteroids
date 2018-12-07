@@ -1,4 +1,4 @@
-#include "MainMenu.h"
+﻿#include "MainMenu.h"
 
 MainMenu::MainMenu() {
 	currentIndex = 0;
@@ -17,9 +17,9 @@ MainMenu::MainMenu() {
 
 	MainText.setFont(font);
 	MainText.setCharacterSize(100);
-	MainText.setString("Just Another Asteroids");
-	MainText.setFillColor(Color::White);
-	MainText.setPosition(200, 150);
+	MainText.setString("Just Another\n   Asteroids");
+	MainText.setFillColor(Color::Black);
+	MainText.setPosition(150, 150);
 
 	currentChoiceRect.setSize(Vector2f(30, 30));
 	currentChoiceRect.setFillColor(Color::Red);
@@ -68,8 +68,10 @@ AppState* MainMenu::update_state(float dt)
 		mainMenuChoice[currentIndex].setColor(Color::Black);
 		enterFlag = 0;
 		if (currentIndex == 1) {
-			exit(0);
+			return (AppState*)7777777;
+			//exit(0);
 		}
+		//delete this;
 		return new GameLevel(1,3,0);;
 	}
 	return nullptr;
@@ -84,5 +86,9 @@ void MainMenu::render_frame(RenderWindow &window)
 		window.draw(mainMenuChoice[i]);
 	}
 	window.draw(currentChoiceRect);
+}
+
+bool MainMenu::getEndFlag() {
+	return endFlag;
 }
 

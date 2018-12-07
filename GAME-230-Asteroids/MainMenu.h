@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -21,9 +21,11 @@ private:
 	Sprite background;
 	RectangleShape currentChoiceRect;
 	int currentIndex;
+	bool endFlag = false;
 public:
 	MainMenu();
 	virtual AppState* update_state(float dt);
 	virtual void render_frame(RenderWindow &window);
+	virtual bool getEndFlag();
 };
 

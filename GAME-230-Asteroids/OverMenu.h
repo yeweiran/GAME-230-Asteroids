@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -20,6 +20,7 @@ private:
 	Text endText;
 	Text scoreText;
 	int score;
+	bool endFlag = false;
 	Texture backTex;
 	Sprite background;
 	RectangleShape currentChoiceRect;
@@ -28,5 +29,6 @@ public:
 	OverMenu(int score);
 	virtual AppState* update_state(float dt);
 	virtual void render_frame(RenderWindow &window);
+	virtual bool getEndFlag();
 };
 

@@ -1,4 +1,4 @@
-#include "OverMenu.h"
+﻿#include "OverMenu.h"
 
 OverMenu::OverMenu(int score) {
 	currentIndex = 0;
@@ -7,26 +7,26 @@ OverMenu::OverMenu(int score) {
 	endMenuChoice[0].setFont(font);
 	endMenuChoice[0].setCharacterSize(50);
 	endMenuChoice[0].setString("Back to Main Menu");
-	endMenuChoice[0].setFillColor(Color::White);
-	endMenuChoice[0].setPosition(WIDTH / 2 - 100, HEIGHT / 2);
+	endMenuChoice[0].setFillColor(Color::Black);
+	endMenuChoice[0].setPosition(WIDTH / 2 - 200, HEIGHT / 2);
 
 	endMenuChoice[1].setFont(font);
 	endMenuChoice[1].setCharacterSize(50);
 	endMenuChoice[1].setString("Exit");
-	endMenuChoice[1].setFillColor(Color::White);
-	endMenuChoice[1].setPosition(WIDTH / 2 - 100, HEIGHT / 2 + 60);
+	endMenuChoice[1].setFillColor(Color::Black);
+	endMenuChoice[1].setPosition(WIDTH / 2 - 200, HEIGHT / 2 + 60);
 
 	endText.setFont(font);
 	endText.setCharacterSize(100);
 	endText.setString("Game Over");
-	endText.setFillColor(Color::White);
-	endText.setPosition(400, 150);
+	endText.setFillColor(Color::Black);
+	endText.setPosition(300, 150);
 
 	scoreText.setFont(font);
 	scoreText.setCharacterSize(50);
 	scoreText.setString("Final Score: " + std::to_string(score));
-	scoreText.setFillColor(Color::White);
-	scoreText.setPosition(450, 300);
+	scoreText.setFillColor(Color::Black);
+	scoreText.setPosition(350, 300);
 
 	currentChoiceRect.setSize(Vector2f(30, 30));
 	currentChoiceRect.setFillColor(Color::Red);
@@ -58,12 +58,12 @@ AppState* OverMenu::update_state(float dt)
 		downFlag = 1;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Up) && upFlag == 1) {
-		endMenuChoice[currentIndex].setColor(Color::White);
+		endMenuChoice[currentIndex].setColor(Color::Black);
 		currentIndex = (currentIndex - 1 + 2) % (2);
 		upFlag = 0;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Down) && downFlag == 1) {
-		endMenuChoice[currentIndex].setColor(Color::White);
+		endMenuChoice[currentIndex].setColor(Color::Black);
 		currentIndex = (currentIndex + 1) % (2);
 		downFlag = 0;
 	}
@@ -73,10 +73,12 @@ AppState* OverMenu::update_state(float dt)
 		enterFlag = 1;
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Enter) && enterFlag == 1) {
-		endMenuChoice[currentIndex].setColor(Color::White);
+		endMenuChoice[currentIndex].setColor(Color::Black);
 		enterFlag = 0;
 		if (currentIndex == 1) {
-			exit(0);
+			endFlag = true;
+			return (AppState*)7777777;
+			//exit(0);
 		}
 		return new MainMenu();
 	}
@@ -93,5 +95,9 @@ void OverMenu::render_frame(RenderWindow &window)
 		window.draw(endMenuChoice[i]);
 	}
 	window.draw(currentChoiceRect);
+}
+
+bool OverMenu::getEndFlag() {
+	return endFlag;
 }
 
